@@ -75,24 +75,65 @@ def tinyMazeSearch(problem):
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
-
     Your search algorithm needs to return a list of actions that reaches the
     goal. Make sure to implement a graph search algorithm.
 
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-
+    """
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    from game import Directions
+    s = Directions.SOUTH
+    w = Directions.WEST
+    e = Directions.EAST
+    n = Directions.NORTH
+
+    #lifo implementation
+    lifo = util.Stack()
+    expanded = set()
+    lifo.push((problem.getStartState(),[],0))
+
+
+    while not lifo.isEmpty():
+        curState, curMoves, curCost = lifo.pop()
+
+        if(curState in expanded):
+            continue
+
+        expanded.add(curState)
+
+        if problem.isGoalState(curState):
+            return curMoves
+
+        for state, direction, cost in problem.getSuccessors(curState):
+            lifo.push((state, curMoves+[direction], curCost))
+    return []
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+     #fifo implementation
+    fifo = util.Queue()
+    expanded = set()
+    fifo.push((problem.getStartState(),[],0))
+
+    while not fifo.isEmpty():
+        curState, curMoves, curCost = fifo.pop()
+
+        if(curState in expanded):
+            continue
+
+        expanded.add(curState)
+
+        if problem.isGoalState(curState):
+            return curMoves
+
+        for state, direction, cost in problem.getSuccessors(curState):
+            fifo.push((state, curMoves+[direction], curCost))
+    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
