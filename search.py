@@ -81,10 +81,6 @@ def depthFirstSearch(problem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
     """
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
@@ -94,13 +90,14 @@ def depthFirstSearch(problem):
     #lifo implementation
     lifo = util.Stack()
     expanded = set()
+    # lifo saves current state, movements from startState, and cost until now
     lifo.push((problem.getStartState(),[],0))
 
 
     while not lifo.isEmpty():
         curState, curMoves, curCost = lifo.pop()
 
-        if(curState in expanded):
+        if(curState in expanded): #si ya lo exploro lo ignora
             continue
 
         expanded.add(curState)
@@ -108,13 +105,13 @@ def depthFirstSearch(problem):
         if problem.isGoalState(curState):
             return curMoves
 
-        for state, direction, cost in problem.getSuccessors(curState):
+        for state, direction, cost in problem.getSuccessors(curState):#expande sucesores del estado actual
             lifo.push((state, curMoves+[direction], curCost))
     return []
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
+
      #fifo implementation
     fifo = util.Queue()
     expanded = set()
@@ -136,9 +133,26 @@ def breadthFirstSearch(problem):
     return []
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    print "Using uniformCostSearch!!"
+    #priority queue
+    fifo = util.PriorityQueue()
+    expanded = set()
+    fifo.push((problem.getStartState(),[],0),0)
+
+    while not fifo.isEmpty():
+        curState, curMoves, curCost = fifo.pop()
+
+        if(curState in expanded):
+            continue
+
+        expanded.add(curState)
+
+        if problem.isGoalState(curState):
+            return curMoves
+
+        for state, direction, cost in problem.getSuccessors(curState):
+            fifo.push((state, curMoves+[direction], cost+curCost),cost+curCost)
+    return []
 
 def nullHeuristic(state, problem=None):
     """
@@ -149,8 +163,30 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #heuristic = h(state,problem)
+    #astar uses as cost the heuristic + cost of the path (dots)
+    #return uniformCostSearch(problem)
+    print "Using astar!!"
+    #priority queue
+    fifo = util.PriorityQueue()
+    expanded = set()
+    fifo.push((problem.getStartState(),[],0),heuristic(problem.getStartState(),problem))
+
+    while not fifo.isEmpty():
+        curState, curMoves, curCost = fifo.pop()
+
+        if(curState in expanded):
+            continue
+
+        expanded.add(curState)
+
+        if problem.isGoalState(curState):
+            return curMoves
+
+        for state, direction, cost in problem.getSuccessors(curState):
+            fifo.push((state, curMoves+[direction], cost+curCost),cost+curCost+heuristic(state,problem))
+    return []
+
 
 
 # Abbreviations
